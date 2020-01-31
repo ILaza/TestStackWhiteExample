@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Automation;
@@ -7,6 +8,7 @@ using TestStack.White.Factory;
 using TestStack.White.Sessions;
 using TestStack.White.UIItems;
 using TestStack.White.UIItems.Finders;
+using TestStack.White.UIItems.TabItems;
 using TestStack.White.UIItems.WindowItems;
 using TestStack.White.UIItems.WPFUIItems;
 
@@ -19,7 +21,8 @@ namespace TestStackWhiteExample
         private Win32Window ndOfficeSettingWindow;
 
         private const string TAB_OTHER = "Other";
-       // private const int V
+        private const int EXPECTED_START_SLIDER_VALUE = 100;
+        private const int EXPECTED_SLIDER_VALUE = 50;
 
         [OneTimeSetUp]
         public void OpenSettingWindowSetUp()
@@ -47,14 +50,19 @@ namespace TestStackWhiteExample
             settingMenu.Click();
             GetSettingWindow();
         }
-
+       
         [Test]
         public void AOpenTabOtherTest()
         {
 
             var tab = ndOfficeSettingWindow.Get(SearchCriteria.ByAutomationId("SettingsTabControl"));
-            var tabOther = tab.Get(SearchCriteria.ByAutomationId("NotificationsTabItem"));
-            tabOther.Click();
+            var tabOther = tab.Get(SearchCriteria.ByAutomationId("NotificationsTabItem")) as TabPage;
+
+            tabOther.Select();
+            var actualResult = tabOther.IsSelected;
+            
+            //var actaulResult = Wait(() => tabOther.IsFocussed, TimeSpan.FromSeconds(10));
+            Assert.IsTrue(actualResult);
         }
 
         [Test]
@@ -63,13 +71,13 @@ namespace TestStackWhiteExample
             var panelActivityCenter = ndOfficeSettingWindow.Get(SearchCriteria.ByAutomationId("ActivityListGroup"));
             var slider = panelActivityCenter.Get<Slider>(SearchCriteria.ByAutomationId("NotificationDocumentsNumberSlider"));
             var thumbSlider = slider.Get<Thumb>(SearchCriteria.ByAutomationId("Thumb"));
+
             thumbSlider.SlideHorizontally(-50);
             Thread.Sleep(1000);
             thumbSlider.SlideHorizontally(50);
             Thread.Sleep(1000);
             slider.Value = 50;
             Thread.Sleep(1000);
-
         }
 
         public void GetSettingWindow()
@@ -80,6 +88,18 @@ namespace TestStackWhiteExample
                                                                  InitializeOption.NoCache,
                                                                  new ApplicationSession().WindowSession(InitializeOption.NoCache));
             Thread.Sleep(2000);
+        }
+        static bool Wait(Func<bool> checker, TimeSpan waitTime)
+        {
+            var till = DateTime.Now + waitTime;
+            var res = false;
+            do
+            {
+                res = checker();
+            }
+            while (DateTime.Now <= till || !res);
+
+            return res;
         }
 
         [OneTimeTearDown]

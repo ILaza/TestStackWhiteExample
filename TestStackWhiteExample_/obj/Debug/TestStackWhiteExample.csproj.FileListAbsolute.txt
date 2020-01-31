@@ -33,3 +33,4 @@ C:\Users\ilaza\source\repos\TestStackWhiteExample\TestStackWhiteExample_\bin\Deb
 C:\Users\ilaza\source\repos\TestStackWhiteExample\TestStackWhiteExample_\obj\Debug\TestStackWhiteExample.csproj.CopyComplete
 C:\Users\ilaza\source\repos\TestStackWhiteExample\TestStackWhiteExample_\obj\Debug\TestStackWhiteExample.dll
 C:\Users\ilaza\source\repos\TestStackWhiteExample\TestStackWhiteExample_\obj\Debug\TestStackWhiteExample.pdb
+C:\Users\ilaza\source\repos\TestStackWhiteExample\TestStackWhiteExample_\obj\Debug\TestStackWhiteExample.csprojAssemblyReference.cache

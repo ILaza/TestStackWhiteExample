@@ -21,10 +21,6 @@ namespace TestStackWhiteExample
         private Window ndOficceMainWindow;
         private Win32Window ndOfficeSettingWindow;
 
-        private const string TAB_OTHER = "Other";
-        private const int EXPECTED_START_SLIDER_VALUE = 100;
-        private const int EXPECTED_SLIDER_VALUE = 50;
-
         [OneTimeSetUp]
         public void OpenSettingWindowSetUp()
         {

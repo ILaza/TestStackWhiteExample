@@ -8,6 +8,7 @@ using TestStack.White.Factory;
 using TestStack.White.Sessions;
 using TestStack.White.UIItems;
 using TestStack.White.UIItems.Finders;
+using TestStack.White.UIItems.ListBoxItems;
 using TestStack.White.UIItems.TabItems;
 using TestStack.White.UIItems.WindowItems;
 using TestStack.White.UIItems.WPFUIItems;
@@ -66,7 +67,7 @@ namespace TestStackWhiteExample
         }
 
         [Test]
-        public void ChangeSlidersValueTest()
+        public void BChangeSlidersValueOnTabOtherTest()
         {
             var panelActivityCenter = ndOfficeSettingWindow.Get(SearchCriteria.ByAutomationId("ActivityListGroup"));
             var slider = panelActivityCenter.Get<Slider>(SearchCriteria.ByAutomationId("NotificationDocumentsNumberSlider"));
@@ -78,6 +79,22 @@ namespace TestStackWhiteExample
             Thread.Sleep(1000);
             slider.Value = 50;
             Thread.Sleep(1000);
+        }
+
+        [Test]
+        public void ChangeComboBoxOnNavigationTabTest()
+        {
+            var tab = ndOfficeSettingWindow.Get(SearchCriteria.ByAutomationId("SettingsTabControl"));
+            var tabOther = tab.Get(SearchCriteria.ByAutomationId("NavigationViewTabItem")) as TabPage;
+
+            tabOther.Select();
+            var actualResult = tabOther.IsSelected;
+
+            //var actaulResult = Wait(() => tabOther.IsFocussed, TimeSpan.FromSeconds(10));
+            Assert.IsTrue(actualResult);
+
+            var comboBox = tabOther.Get<ComboBox>(SearchCriteria.ByAutomationId("NdOfficedialogsDefaultLocationsCombo"));
+            comboBox.Select("Outlook");
         }
 
         public void GetSettingWindow()
@@ -104,13 +121,12 @@ namespace TestStackWhiteExample
 
         [OneTimeTearDown]
        public void SettingWindowDeleteTearDown()
-        {
+       {
             if (ndOfficeSettingWindow!= null)
             {
                 ndOfficeSettingWindow.Close();
                 ndOfficeSettingWindow = null;
             }
-        }
-            
+       }            
     }
 }

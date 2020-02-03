@@ -48,7 +48,8 @@
     <Reference Include="UIAutomationTypes" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestClass.cs" />
+    <Compile Include="ActivityCenterSettingTestTestClass.cs" />
+    <Compile Include="WpfVScrollbar.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -46,9 +46,11 @@
     </Reference>
     <Reference Include="UIAutomationClient" />
     <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActivityCenterSettingTestTestClass.cs" />
+    <Compile Include="ActivityCenterSettingTestClass.cs" />
+    <Compile Include="DatePickerInOpenDialogTestClass.cs" />
     <Compile Include="WpfVScrollbar.cs" />
   </ItemGroup>
   <ItemGroup>

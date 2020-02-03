@@ -1,22 +1,26 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Windows.Automation;
 using TestStack.White;
 using TestStack.White.Factory;
+using TestStack.White.InputDevices;
 using TestStack.White.Sessions;
 using TestStack.White.UIItems;
+using TestStack.White.UIItems.Actions;
 using TestStack.White.UIItems.Finders;
 using TestStack.White.UIItems.ListBoxItems;
 using TestStack.White.UIItems.TabItems;
 using TestStack.White.UIItems.WindowItems;
 using TestStack.White.UIItems.WPFUIItems;
+using TestStack.White.WindowsAPI;
 
 namespace TestStackWhiteExample
 {
     [TestFixture]
-    public class ActivityCenterSettingTestTestClass
+    public class ActivityCenterSettingTestClass
     {
         private Window ndOficceMainWindow;
         private Win32Window ndOfficeSettingWindow;
@@ -45,15 +49,15 @@ namespace TestStackWhiteExample
             searchCriteria = SearchCriteria.ByAutomationId("OpenSettingsMenuItem");
             var settingMenu = ndOficceMainWindow.Get(searchCriteria);
             settingMenu.Click();
-            GetSettingWindow();
+            GetWindowByUIAutomation();
         }
        
         [Test, Order(1)]
         public void OpenTabOtherTest()
         {
 
-            var tab = ndOfficeSettingWindow.Get(SearchCriteria.ByAutomationId("SettingsTabControl"));
-            var tabOther = tab.Get(SearchCriteria.ByAutomationId("NotificationsTabItem")) as TabPage;
+            var tab = ndOfficeSettingWindow.Get<Tab>(SearchCriteria.ByAutomationId("SettingsTabControl"));
+            var tabOther = tab.Get<TabPage>(SearchCriteria.ByAutomationId("NotificationsTabItem"));
 
             tabOther.Select();
             var actualResult = tabOther.IsSelected;
@@ -90,11 +94,48 @@ namespace TestStackWhiteExample
             Assert.IsTrue(actualResult);
 
             var comboBox = tabOther.Get<ComboBox>(SearchCriteria.ByAutomationId("NdOfficedialogsDefaultLocationsCombo"));
-            comboBox.Select("Outlook");
+            comboBox.Select(1);
+            Thread.Sleep(2000);
+            comboBox.Select(0);
             Thread.Sleep(2000);
         }
 
-        public void GetSettingWindow()
+        [Test, Order(4)]
+        public void ChangeHostTextBoxOnNetworkTab()
+        {
+            var tab = ndOfficeSettingWindow.Get<Tab>(SearchCriteria.ByAutomationId("SettingsTabControl"));
+            var tabNetwork = tab.Get<TabPage>(SearchCriteria.ByAutomationId("HostTabItem"));
+            tabNetwork.Select();
+
+            var proxyGroup = tabNetwork.Get<GroupBox>(SearchCriteria.ByAutomationId("ProxyGroupItem"));
+            var httpProxyRadioButton = proxyGroup.Get<RadioButton>(SearchCriteria.ByAutomationId("HttpProxyRadio"));
+            httpProxyRadioButton.Select();
+
+            var hostValueTextBox = proxyGroup.Get<TextBox>(SearchCriteria.ByAutomationId("ProxyHostValueTextBox"));
+            
+            Mouse.Instance.Location = hostValueTextBox.Bounds.BottomLeft;
+            hostValueTextBox.ClickAtCenter();
+
+            Keyboard.Instance.Enter("TEST TEXT");
+            Thread.Sleep(5000);
+            Keyboard.Instance.Enter(string.Empty);
+
+            string testString = "Test Text";
+            var lines = testString.Replace("\r\n", "\n").Split('\n');
+            Keyboard.Instance.Send(lines[0], new NullActionListener());
+            foreach (var line in lines.Skip(1))
+            {
+                Keyboard.Instance.PressSpecialKey(KeyboardInput.SpecialKeys.RETURN);
+                Keyboard.Instance.Send(line, hostValueTextBox.ActionListener);                   
+            }            
+
+            Thread.Sleep(5000);
+
+            var systemProxyRadioButton = proxyGroup.Get<RadioButton>(SearchCriteria.ByAutomationId("SystemProxyRadio"));
+            systemProxyRadioButton.Select();         
+        }
+
+        public void GetWindowByUIAutomation()
         {
             var propCondition = new PropertyCondition(AutomationElement.AutomationIdProperty, "SettingsWindow");
             var ndOfficeSettingDesctopWindowAutomationElement = ndOficceMainWindow.AutomationElement.FindFirst(TreeScope.Descendants, propCondition);
